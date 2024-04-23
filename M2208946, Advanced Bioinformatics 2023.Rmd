@@ -1,0 +1,651 @@
+---
+title: "Advanced Bioinformatics 2023 assessment"
+author: "M2208946"
+date: "2024-03-24"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+options(repos = "https://cran.rstudio.com/")  # Set the CRAN mirror to RStudio's mirror
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+#Task 3.1. Using the sum() function and : operator, write an expression in the code snippet to evaluate the sum of all integers between 5 and 55.
+#'5:55' - creates the sequence of all integers from 5 - 55
+#'sum()'- calculates the sum of all integers in the above sequence
+#'result' - is the variable that stored the result of the sum
+#'print(result)' prints the result to the console.
+result <- sum(5:55)
+print(result)
+```
+
+#Task 3.2. Write a function called sumfun with one input parameter, called n, that calculates the sum of all integers between 5 and n. Use the function to do the calculation for n = 10, n = 20, and n = 100 and present the results
+#'sumfun' - takes input parameter 'n' and calculates the sum of all integers between 5 and 'n'
+```{r}
+#Task 3.2. Write a function called sumfun with one input parameter, called n, that calculates the sum of all integers between 5 and n. Use the function to do the calculation for n = 10, n = 20, and n = 100 and present the results
+#'sumfun' - takes input parameter 'n' and calculates the sum of all integers between 5 and 'n'
+sumfun <- function(n) {
+result <- sum(5:n)
+return(result)
+}
+
+#calculating sum for n = 10
+result_10 <- sumfun(10)
+cat("Sum for n = 10:", result_10, "\n")
+
+#calculating sum for n = 20
+result_20 <- sumfun(20)
+cat("Sum for n = 20:", result_20, "\n")
+
+#calculating sum for n = 100
+result_100 <- sumfun(100)
+cat("Sum for n = 100:", result_100, "\n")
+
+#cat() function used to concatenates and print multiple values in the console
+```
+
+
+
+```{r}
+#Task 3.3. The famous Fibonacci series is calculated as the sum of the two preceding members of the sequence, where the first two steps in the sequence are 1, 1. 
+#First, Initialize variables for the first two Fibonacci numbers which is 1, 1.
+fibonacci <- c(1, 1)
+
+#Write an R script using a for loop to calculate and print out the first 12 entries of the Fibonacci series. 
+#using the for loop to calculate the first 12 Fibonacci numbers and store them in the 'fibonacci' vector
+for (i in 3:12) {
+  next_fib <- fibonacci[i - 1] + fibonacci[i - 2]  # Calculate the next Fibonacci number
+  fibonacci <- c(fibonacci, next_fib)             # Add the next Fibonacci number to the sequence
+}
+
+# Print the Fibonacci sequence (i.e. printing the first 12 Fibonacci numbers)
+cat("The first 12 entries of the Fibonacci series are:\n")
+for (i in 1:12) {
+  cat(fibonacci[i], " ")
+}
+```
+
+```{r}
+#Task 3.4. With the mtcars dataset bundled with R, use ggplot to generate a box of miles per gallon (in the variable mpg) as a function of the number of gears (in the variable gear). Use the fill aesthetic to colour bars by number of gears. 
+
+#Using ggplot() to create a plot with the mtcars dataset
+library(ggplot2)
+
+#Loading the mtcars dataset
+data(mtcars)
+
+# Creating a boxplot (mapping the x axis to the factor variable 'gear' and y axis to the continuous variable 'mpg').
+#geom_plot() creates the boxplot, and labs() sets the axis labels.
+#scale_fill_discrete() sets the legend title for the fill aesthetic, and theme_minimal() adjusts the plot theme for a cleaner appearance.
+ggplot(mtcars, aes(x = factor(gear), y = mpg, fill = factor(gear))) +
+  geom_boxplot() +
+  labs(x = "Number of Gears", y = "Miles per Gallon") +
+  scale_fill_discrete(name = "Number of Gears") +
+  theme_minimal()
+```
+
+```{r}
+#Task 3.5. Using the cars dataset and the function lm, fit a linear relationship between speed and breaking distance in the variable distance. What are the fitted slope and intercept of the line, and their standard errors? What are the units used for the variables in the dataset? 
+
+# Loading the cars dataset
+data(cars)
+
+# Fitting a linear regression model - with 'dist' as the dependent variable and 'speed' as the independent variable
+model <- lm(dist ~ speed, data = cars)
+
+# Getting the coefficients of the model
+coefficients <- coef(model)
+
+# Extracting the coefficients of the model, which includes slope and intercept along with their standard errors from the model summary
+slope <- coefficients["speed"]
+intercept <- coefficients["(Intercept)"]
+slope_stderr <- summary(model)$coefficients["speed", "Std. Error"]
+intercept_stderr <- summary(model)$coefficients["(Intercept)", "Std. Error"]
+
+# Printing the results (fitted slope, intercept, their standard errors and the units used for the variables in the dataset)
+cat("Fitted slope of the line:", slope, "\n")
+cat("Fitted intercept of the line:", intercept, "\n")
+cat("Standard error of the slope:", slope_stderr, "\n")
+cat("Standard error of the intercept:", intercept_stderr, "\n")
+
+# Getting the units used for the variables in the dataset
+units_speed <- attr(cars$speed, "unit")
+units_distance <- attr(cars$dist, "unit")
+cat("Units for speed:", units_speed, "\n")
+cat("Units for distance:", units_distance, "\n")
+
+#Units for speed = miles per hour (mph), and the units for distance = feet (ft).
+```
+
+```{r}
+#Task 3.6. Use ggplot to plot the data points from Task 6 and the linear fit. 
+
+# Loading ggplot library
+library(ggplot2)
+
+# Loading the cars dataset
+data(cars)
+
+# Plotting the data points and the linear fit - ('ggplot' used to plot points along with linear fit). ('geom_point()' adds the data points and 'geom_smooth()' adds the linear fit line).
+#'method = "lm"' indicates that we want to fit a linear model and 'se = FALSE' to suppress display of confidence intervals. Plot theme set to minimal.
+ggplot(cars, aes(x = speed, y = dist)) +
+  geom_point() +  # Add data points
+  geom_smooth(method = "lm", se = FALSE, color = "blue") +  # Add linear fit
+  labs(x = "Speed", y = "Braking Distance") +  # Add axis labels
+  ggtitle("Linear Relationship between Speed and Braking Distance") +  # Add title
+  theme_minimal()  # Set plot theme
+```
+
+```{r}
+#Task 3.7. Again, using the cars dataset, now use linear regression (lm) to estimate the average reaction time for the driver to start breaking (in seconds). To simplify matters you may assume that once breaking commences, breaking distance is proportional to the square of the speed. Explain the steps in your analysis. Do you get reasonable results? Finally, use ggplot to plot the data points and the fitted relationship. 
+
+# Loading ggplot library
+library(ggplot2)
+
+# Loading the cars dataset
+data(cars)
+
+# Data Transformation: Calculate breaking distance using the relationship that breaking distance is proportional to the square of speed
+cars$breaking_distance <- cars$dist - (cars$speed^2)
+
+# Linear Regression: Fit a linear regression model (assigning breaking distance as dependent variable and speed as the independent variable)
+model <- lm(breaking_distance ~ speed^2, data = cars)
+
+# Analysis of Results: Get the coefficients of the model
+coefficients <- coef(model)
+
+# Extracting the coefficient for speed^2, which represents the average reaction time
+average_reaction_time <- coefficients["speed^2"]
+
+# Printing the estimated average reaction time
+cat("Estimated average reaction time for the driver to start braking (in seconds):", average_reaction_time, "\n")
+
+# Visualization: Plot the data points and the fitted relationship
+ggplot(cars, aes(x = speed, y = breaking_distance)) +
+  geom_point() +  # Add data points
+  geom_smooth(method = "lm", se = FALSE, color = "blue", formula = y ~ x^2) +  # Add fitted relationship
+  labs(x = "Speed", y = "Breaking Distance") +  # Add axis labels
+  ggtitle("Relationship between Speed and Breaking Distance (After Braking Commences)") +  # Add title
+  theme_minimal()  # Setting plot theme to minimal
+
+```
+
+```{r}
+#RNA-seq assessment
+#Task 3.8. Read in count data and sample description
+#Load required library 
+library(readr)
+
+# Specify file path
+file_path <- "/Users/sandra/Desktop/MSc_FOLDER/ADVANCED_BIOINFORMATICS/LMS_RNAseq_short-master-2023-final/course/exercises/data/exercise1_counts.csv"
+
+# Read CSV file
+data <- read.csv("/Users/sandra/Desktop/MSc_FOLDER/ADVANCED_BIOINFORMATICS/LMS_RNAseq_short-master-2023-final/course/exercises/data/exercise1_counts.csv")
+
+# Check the first few rows of the data
+head(data)
+
+```
+
+```{r}
+#RNA-seq assessment
+#Task 3.8. Read in count data and sample description
+#Load required library 
+library(readr)
+
+# Read in count data
+all_counts <- read.csv("/Users/sandra/Desktop/MSc_FOLDER/ADVANCED_BIOINFORMATICS/LMS_RNAseq_short-master-2023-final/course/exercises/data/exercise1_counts.csv", row.names = 1)
+
+# Explore data
+head(all_counts)
+
+dim(all_counts)
+
+class(all_counts)
+
+# Read input file with sample description
+sam_des <- read.table("/Users/sandra/Desktop/MSc_FOLDER/ADVANCED_BIOINFORMATICS/LMS_RNAseq_short-master-2023-final/course/exercises/data/exercise1_sample_description.info", sep = "\t", header = TRUE)
+
+# Explore data
+head(sam_des)
+
+dim(sam_des)
+
+class(sam_des)
+```
+
+```{r}
+#RNA-seq assessment
+# Task 3.9. Create col_data and check dimensions.  
+# (Collect sample information)
+
+# Prepare data for DESeq
+col_data <- data.frame(Sample = sam_des$Sample,
+                  Group = sam_des$Group,
+                  Batch = sam_des$Batch)
+
+# Store data as factors
+col_data$Sample <- as.factor(col_data$Sample)
+col_data$Group <- as.factor(col_data$Group)
+col_data$Batch <- as.factor(col_data$Batch)
+
+# Check dimensions
+all(colnames(all_counts) == sam_des$Sample)
+
+
+```
+
+
+```{r}
+#RNA-seq assessment
+# Task 3.10. Construct DESeqDataSet object using count data and sample description.
+
+# Load DESeq2 library
+library(DESeq2)
+
+# Check dimensions of count data
+dim(all_counts)
+
+# Check dimensions of sample description data
+dim(col_data)
+
+# Create col_data with sample information
+col_data <- data.frame(
+  Sample = colnames(all_counts),  # Assuming column names represent sample identifiers
+  Group = c("control", "control", "control", "mutant", "mutant", "mutant", "mutant", "mutant", "mutant") 
+)
+
+# Ensure that Sample column is converted to a factor
+col_data$Sample <- as.factor(col_data$Sample)
+
+# Build DESeq dataset
+dds <- DESeqDataSetFromMatrix(countData = all_counts, 
+                              colData = col_data, 
+                              design = ~Group)
+# Apply DESeq Normalization
+dds <- DESeq(dds)
+
+# Ask for information about DESeq
+?DESeq
+
+# Estimate gene-wise dispersions
+head(dispersions(dds))
+
+# Plot dispersions
+plotDispEsts(dds)
+
+# Estimate size factors
+sizeFactors(dds)
+
+# Compute Wald test - Hypothesis test for differential expression (P values adjustment)
+nbinomWaldTest(dds)
+
+# Obtain results from DESeq
+res <- results(dds)
+head(res)
+
+# Order by adjusted p-value
+res_ordered <- res[order(res$padj), ]
+head(res_ordered)
+
+```
+
+
+```{r}
+#RNA-seq assessment
+# Task 3.11. Perform rlog (regularized log transformation) and VST (variance stabilizing transformation) on the data.
+
+# Regularized log transformation - This helps to stabilize the variance across samples.
+dds_rlog <- rlog(dds)
+class(dds_rlog) # Check the class of the object
+
+# Get regularized log-transformed counts from DESeqTransform object
+rlog_counts <- assay(dds_rlog)
+class(rlog_counts) # Check the class of the object
+
+# VST - Variance stabilizing transformation
+vsd <- varianceStabilizingTransformation(dds)
+class(vsd) # Check the class of the object
+
+# Get rlog in count format
+vsd_counts <- assay(vsd)
+class(vsd_counts) # Check the class of the object
+
+```
+
+```{r}
+#RNA-seq assessment
+# Task 3.12.Draw a heatmap of count matrix based on the top 40 highly expressed genes using rlog and VST data. 
+
+# Load pheatmap library
+library("pheatmap")
+
+# Get dds normalized counts
+dds_counts <- counts(dds, normalized = TRUE)
+head(dds_counts)
+
+# Get normalized counts - 40 higher values
+select <- order(rowMeans(dds_counts), decreasing = TRUE)[1:40]
+head(select)
+
+# Heatmap of the rlog transformed data
+pheatmap(assay(dds_rlog)[select, ])
+
+# Heatmap of the vst transformed data
+pheatmap(assay(vsd)[select, ])
+
+```
+
+```{r}
+#RNA-seq assessment
+# Task 3.13. Generate a SDM to see the clustering of count data. 
+
+# Sample Distance Matrix - To explore clustering behaviour
+print("Sample Distance Matrix")
+
+# Compute SDM from rlog transformed data
+sample_dist <- dist(t(assay(dds_rlog)))
+class(sample_dist)
+
+# Get SDM in matrix form
+sdm <- as.matrix(sample_dist)
+class(sdm)
+
+# Load library
+library("RColorBrewer")
+
+# Add row names for clear plot
+rownames(sdm) <- col_data$Group
+colnames(sdm) <- NULL
+
+# Add colors
+colors <- colorRampPalette(rev(brewer.pal(9, "Blues")))(255)
+
+# Plot heatmap
+pheatmap(sdm,
+         clustering_distance_rows = sample_dist,
+         clustering_distance_cols = sample_dist,
+         col = colors)
+```
+
+```{r}
+#RNA-seq assessment
+# Task 3.14. Perform the Principal Component Analysis using rlog method and find out the % significance values of first two principal components. 
+
+# Principal Component Analysis
+print("Principal Component Analysis")
+
+# Load DESeq2 library
+library(DESeq2)
+
+# Save figure
+library(ggplot2)
+ggsave(file = "figures/PCA_plot_rlog.png")
+
+# PCA plot on our rlog transformed data
+plotPCA(dds_rlog, intgroup = "Group")
+
+```
+
+```{r}
+#RNA-seq assessment
+# 3.15. Repeat the PCA, this time using VST method and compare the plots with the ones obtained using rlog method. 
+
+# Perform VST transformation
+dds_vst <- vst(dds)
+class(dds_vst) # Check the class of the object
+
+# View the first few rows of the transformed data
+head(assay(dds_vst))
+
+# Save figure
+library(ggplot2)
+ggsave(file = "figures/PCA_plot_vst.png")
+
+# PCA plot on our VST transformed data
+plotPCA(dds_vst, intgroup = "Group")
+
+```
+
+```{r}
+#ChiP-seq assessment
+# 3.16. Read in the two Myc Mel peakset replicates and create the common peakset 
+
+# Set the working directory
+setwd("/Users/sandra/Desktop/MSc_FOLDER/ADVANCED_BIOINFORMATICS/LMS_ChIPseq_short-master-2023-final/course/data/MacsPeaks")
+
+# Set the directory path
+directory_path <- "/Users/sandra/Desktop/MSc_FOLDER/ADVANCED_BIOINFORMATICS/LMS_ChIPseq_short-master-2023-final/course/data/MacsPeaks/"
+
+# Read in the two Myc Mel peakset replicates
+# Importing peaks using the absolute file path
+peakfile <- paste0(directory_path, "mycmelrep1_peaks.xls")
+peakfile <- paste0(directory_path, "mycmelrep2_peaks.xls")
+macsPeaks_DF <- read.delim(peakfile, comment.char = "#")
+macsPeaks_DF[1:2,]
+
+# View the first two rows of the table
+head(macsPeaks_DF, n = 2)
+```
+
+
+```{r}
+#ChiP-seq assessment
+# 3.16. Read in the two Myc Mel peakset replicates and create the common peakset  
+
+# Create the common peakset
+# Load GenomicRanges library
+library(GenomicRanges)
+macsPeaks_GR <- GRanges(
+ seqnames=macsPeaks_DF[,"chr"],
+ IRanges(macsPeaks_DF[,"start"],
+         macsPeaks_DF[,"end"]
+ )
+)
+macsPeaks_GR
+```
+
+```{r}
+#ChiP-seq assessment
+# 3.17. Now we can rank them by their fold enrichment, select the top 500 peaks and resize these peaks to 200bp around centre.  
+
+# Read in the two replicate Myc ChIP replicates for mel cell.
+firstPeakSet <- ChIPQC:::GetGRanges("/Users/sandra/Desktop/MSc_FOLDER/ADVANCED_BIOINFORMATICS/LMS_ChIPseq_short-master-2023-final/course/data/MacsPeaks/mycmelrep1_peaks.xls", sep="\t", simple=FALSE)
+
+secondPeakSet <- ChIPQC:::GetGRanges("/Users/sandra/Desktop/MSc_FOLDER/ADVANCED_BIOINFORMATICS/LMS_ChIPseq_short-master-2023-final/course/data/MacsPeaks/mycmelrep2_peaks.xls", sep="\t", simple=FALSE)
+
+OnlyfirstPeakSet <- firstPeakSet[!firstPeakSet %over% secondPeakSet]
+firstANDsecondPeakSets <- firstPeakSet[firstPeakSet %over% secondPeakSet]
+length(OnlyfirstPeakSet)
+length(firstANDsecondPeakSets)
+
+foldEnrichment <- firstPeakSet$fold_enrichment
+# or foldEnrichment <- firstPeakSet[,"fold_enrichment"]
+foldEnrichment[1:500]
+
+# Resize peaks to 200bp around center
+centered_peaks <- resize(firstANDsecondPeakSets, width = 200, fix = "center")
+
+# View the resulting peaks
+print(centered_peaks)
+
+```
+
+```{r}
+#ChiP-seq assessment
+# 3.17. Now we can rank them by their fold enrichment, select the top 500 peaks and resize these peaks to 200bp around centre.
+
+# To access fold_enrichment
+FirstOnly_FE <- log2(OnlyfirstPeakSet$fold_enrichment)
+FirstAndSecond_FE <- log2(firstANDsecondPeakSets$fold_enrichment)
+
+# Plot distribution peak's signal (input for common to both replicas vs unique to replicate 1).
+boxplot(FirstOnly_FE,
+        FirstAndSecond_FE,
+        names=c("Only_in_First","Common_to_first_second"),
+        ylab="log2 Fold_Enrichment")
+# boxplot: shows that peaks with the highest fold enrichment are common to both replicates
+```
+
+```{r}
+#ChiP-seq assessment
+# 3.17. Now we can rank them by their fold enrichment, select the top 500 peaks and resize these peaks to 200bp around centre.
+
+# Reduce peaksets to single non-overlapping peakset
+allPeaks <- c(firstPeakSet,secondPeakSet)
+allPeaksReduced <- reduce(allPeaks)
+length(allPeaks)
+length(allPeaksReduced)
+
+# Subset reduced peak set to overlapping peaks in both replicates
+commonPeaks <- allPeaksReduced[allPeaksReduced %over% firstPeakSet 
+                               & allPeaksReduced %over% secondPeakSet]
+length(commonPeaks)
+
+```
+
+
+```{r}
+#ChiP-seq assessment
+# 3.18. Extract the sequences underneath the file and write them to FASTA file in you working directory. Inspect the file in notepad. 
+
+# Install AnnotationHub
+BiocManager::install("AnnotationHub")
+
+# Find the directory where AnnotationHub package is installed
+path_to_annhub <- system.file(package = "AnnotationHub")
+
+BiocManager::install("TxDb.Mmusculus.UCSC.mm9.knownGene")
+BiocManager::install("BSgenome.Mmusculus.UCSC.mm9")
+
+# Manual install of BSgenome
+install.packages("/Users/sandra/Desktop/MSc_FOLDER/ADVANCED_BIOINFORMATICS/BSgenome.Mmusculus.UCSC.mm9_1.4.0.tar.gz", repos = NULL, type = "source")
+
+# Install package to explore Meme-Chip html data
+install.packages("rvest")
+
+```
+
+```{r}
+#ChiP-seq assessment
+# 3.18. Extract the sequences underneath the file and write them to FASTA file in your working directory. Inspect the file in notepad. 
+
+# Load required libraries
+library(TxDb.Mmusculus.UCSC.mm9.knownGene)
+library(org.Mm.eg.db)
+library(GenomeInfoDb)
+library(ChIPseeker)
+
+commonPeaks[1:2, ]
+
+# To style defined commonPeaks to “UCSC” standard using the seqlevelsStyle function
+seqlevelsStyle(commonPeaks) <- "UCSC"
+commonPeaks[1:2, ]
+
+```
+
+```{r}
+#ChiP-seq assessment
+# 3.18. Extract the sequences underneath the file and write them to FASTA file in your working directory. Inspect the file in notepad.
+
+# Creating a TXDB object for gene locations and a database object name to retrieve gene names from.
+peakAnno <- annotatePeak(commonPeaks, tssRegion = c(-1000, 1000), TxDb = TxDb.Mmusculus.UCSC.mm9.knownGene,
+    annoDb = "org.Mm.eg.db")
+
+class(peakAnno)
+
+peakAnno
+
+# To extract from csAnno object
+peakAnno_GR <- as.GRanges(peakAnno)
+peakAnno_GR[1:3, ]
+
+# PlotAnnoBar
+plotAnnoBar(peakAnno)
+
+# Plot the distribution pf peaks around TSS sites
+plotDistToTSS(peakAnno)
+
+# Succinct plot describing overlap between annotations
+upsetplot(peakAnno, vennpie = F)
+
+```
+
+
+```{r}
+#ChiP-seq assessment
+# 3.18. Extract the sequences underneath the file and write them to FASTA file in your working directory. Inspect the file in notepad. 
+
+# Provide a peak set resized to a common length
+commonPeaks <- resize(commonPeaks,300,fix="center")
+commonPeaks[1:4,]
+
+library(TxDb.Mmusculus.UCSC.mm9.knownGene)  # Load the mm9 genome package
+library(BSgenome.Mmusculus.UCSC.mm9) # Load the mm9 genome package for BSgenome
+
+# Extract sequences from the BSgenome object for the genomic coordinates in 'commonPeaks'
+commonPeaksSequences <- getSeq(BSgenome.Mmusculus.UCSC.mm9, GRanges(commonPeaks))
+
+# Assign names to the elements of the DNAStringSet based on peak coordinates
+names(commonPeaksSequences) <- paste0("peak_",seqnames(commonPeaks),"_",
+                                         start(commonPeaks),
+                                         "-",
+                                         end(commonPeaks))
+# View the first two sequences
+commonPeaksSequences[1:2,]
+
+```
+
+```{r}
+
+#ChiP-seq assessment
+# 3.18. Extract the sequences underneath the file and write them to FASTA file in your working directory. Inspect the file in notepad. 
+
+# Writing to FASTA file
+writeXStringSet(commonPeaksSequences,file="consensusPeaks.fa")
+
+# get working directory to access path where consensusPeaks.fa was downloaded to
+getwd()
+
+```
+
+```{r}
+#ChiP-seq assessment
+# 3.18. Upload the sequences to Meme-ChIP and report the results when complete
+# Generated consensusPeaks.fa file is uploaded to Meme-Chip web portal https://meme-suite.org/meme/tools/meme
+# Results from Meme-Chip motif analysis generated. Producing Meme-ChIP HTML output, Gzipped TAR file of all output, Meme-ChIP TSV output, Meme-ChIP motif output file.
+
+# Load the necessary packages
+library(rvest)
+
+# Read in the Meme-Chip HTML file
+html_file <- "/Users/sandra/Desktop/MSc_FOLDER/ADVANCED_BIOINFORMATICS/Adv_Bioinformatics_Assignment/appMEMECHIP_5.5.51713712324287346252359/meme-chip.html"
+meme_chip_data <- read_html(html_file)
+
+# Explore the structure of the HTML document
+str(meme_chip_data)
+
+```
+
+```{r}
+#ChiP-seq assessment
+# 3.18. Upload the sequences to Meme-ChIP and report the results when complete
+# Generated consensusPeaks.fa file is uploaded to Meme-Chip web portal https://meme-suite.org/meme/tools/meme
+# Results from Meme-Chip motif analysis generated. Producing Meme-ChIP HTML output, Gzipped TAR file of all output, Meme-ChIP TSV output, Meme-ChIP motif output file.
+
+# Specifiy path for Meme-ChIP summary data
+summary_data <- "/Users/sandra/Desktop/MSc_FOLDER/ADVANCED_BIOINFORMATICS/Adv_Bioinformatics_Assignment/appMEMECHIP_5.5.51713712324287346252359/summary.tsv"
+
+# Read in the Meme-ChIP summary TSV file
+summary_data <- read.delim("summary.tsv")
+
+# View the structure of the data
+str(summary_data)
+
+# View the first few rows of the data
+head(summary_data)
+
+```
+
